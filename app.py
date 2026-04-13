@@ -6,18 +6,13 @@ app = Flask(__name__)
 @app.route("/reply", methods=["POST"])
 def reply():
     data = request.get_json(force=True, silent=True) or {}
-    print("Incoming payload:", json.dumps(data, indent=2))
+    print("Incoming:", json.dumps(data, indent=2))
 
-    # try every possible field the bot might send
-    text = (
-        data.get("text")
-        or data.get("message_text")
-        or data.get("message", {}).get("text", "")
-        or str(data)
-    )
+    # bot sends: {"message": "hello", "chat_id": ..., "user_id": ..., "timestamp": ...}
+    text = data.get("message") or data.get("text", "")
 
     reply_text = f"You said: {text}"
-    print("Replying with:", reply_text)
+    print("Replying:", reply_text)
 
     return jsonify({"reply": reply_text})
 
